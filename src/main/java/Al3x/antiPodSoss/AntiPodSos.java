@@ -21,18 +21,14 @@ public class AntiPodSos extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        // Сохраняем конфиг по умолчанию
         saveDefaultConfig();
         config = getConfig();
 
-        // Инициализация менеджера лута
         lootManager = new LootManager(this);
 
-        // Регистрация ивентов
         Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerPickupListener(this), this);
 
-        // Запуск таска для обновления частиц
         startParticleTask();
 
         getLogger().info("AntiPodSos успешно запущен!");
@@ -40,7 +36,6 @@ public class AntiPodSos extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Очистка при выключении
         if (lootManager != null) {
             lootManager.cleanup();
         }
@@ -51,7 +46,6 @@ public class AntiPodSos extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (command.getName().equalsIgnoreCase("antipodsos")) {
             if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-                // Команда перезагрузки конфига
                 if (!sender.hasPermission("antipodsos.reload")) {
                     sendMessage(sender, "no-permission");
                     return true;
@@ -75,9 +69,6 @@ public class AntiPodSos extends JavaPlugin {
         return false;
     }
 
-    /**
-     * Запускает задачу для обновления частиц
-     */
     private void startParticleTask() {
         new BukkitRunnable() {
             @Override
@@ -86,14 +77,9 @@ public class AntiPodSos extends JavaPlugin {
                     lootManager.updateParticles();
                 }
             }
-        }.runTaskTimer(this, 0L, 5L); // Обновление каждые 5 тиков (0.25 секунды)
+        }.runTaskTimer(this, 0L, 5L);
     }
 
-    /**
-     * Отправляет сообщение из конфига
-     * @param sender Получатель сообщения
-     * @param messageKey Ключ сообщения в конфиге
-     */
     public void sendMessage(CommandSender sender, String messageKey) {
         String message = config.getString("settings.messages." + messageKey, "");
         if (!message.isEmpty()) {
@@ -101,24 +87,16 @@ public class AntiPodSos extends JavaPlugin {
         }
     }
 
-    /**
-     * Получить экземпляр плагина
-     */
     public static AntiPodSos getInstance() {
         return instance;
     }
 
-    /**
-     * Получить менеджер лута
-     */
     public LootManager getLootManager() {
         return lootManager;
     }
 
-    /**
-     * Получить конфигурацию плагина
-     */
     public FileConfiguration getPluginConfig() {
         return config;
     }
+
 }
