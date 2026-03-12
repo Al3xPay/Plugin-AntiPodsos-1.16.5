@@ -27,7 +27,6 @@ public class LootManager {
         startCleanupTask();
     }
 
-    // Автоматическая очистка сообщений чата
     private void startCleanupTask() {
         new BukkitRunnable() {
             @Override
@@ -37,7 +36,6 @@ public class LootManager {
         }.runTaskTimer(plugin, 0L, 20L);
     }
 
-    // Очистка сообщений чата
     private void cleanupChatMessages() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player.hasMetadata("loot_timer_message")) {
@@ -59,21 +57,17 @@ public class LootManager {
         applyGlowEffect(item);
         createHologram(item, duration);
 
-        // Блокируем подбор для всех кроме убийцы
         blockPickupForOthers(killer, duration);
 
-        // Сообщение в actionbar вместо чата
         String message = config.getString("settings.messages.killer-notification",
                         "§aТолько вы можете забрать лут: §e%time%§a сек")
                 .replace("%time%", String.valueOf(duration));
 
         sendActionBar(killer, message);
 
-        // ЗАПУСК ТАЙМЕРА - ЭТО БЫЛО ПРОПУЩЕНО!
         startProtectionTimer(itemId);
     }
 
-    // Блокировка подбора
     private void blockPickupForOthers(Player exception, int duration) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (!player.equals(exception)) {
@@ -89,7 +83,6 @@ public class LootManager {
         }.runTaskLater(plugin, duration * 20L);
     }
 
-    // Отправка в actionbar
     private void sendActionBar(Player player, String message) {
         player.sendTitle("", ChatColor.translateAlternateColorCodes('&', message),
                 10, 40, 10);
@@ -178,24 +171,21 @@ public class LootManager {
                 protectedItem.decreaseTime();
                 int secondsLeft = protectedItem.getTimeLeft();
 
-                // Обновляем голограмму
                 updateHologram(protectedItem.getItem(), secondsLeft);
 
                 if (secondsLeft <= 0) {
                     removeProtection(itemId);
                     this.cancel();
 
-                    // Уведомление о конце защиты
                     Player killer = Bukkit.getPlayer(protectedItem.getKillerId());
                     if (killer != null && killer.isOnline()) {
                         sendActionBar(killer, "§aЗащита лута закончилась!");
                     }
                 }
             }
-        }.runTaskTimer(plugin, 20L, 20L); // Запуск через 1 секунду, затем каждую секунду
+        }.runTaskTimer(plugin, 20L, 20L);
     }
 
-    // Основная проверка подбора
     public boolean canPickup(Player player, Item item) {
         UUID itemId = item.getUniqueId();
 
@@ -205,7 +195,6 @@ public class LootManager {
 
         ProtectedItem protectedItem = protectedItems.get(itemId);
 
-        // Глобальная блокировка подбора
         if (blockedPickupPlayers.contains(player.getUniqueId())) {
             sendActionBar(player, "§cПодбор заблокирован во время таймера!");
             return false;
@@ -268,7 +257,6 @@ public class LootManager {
         }
     }
 
-    // Метод для проверки состояния таймеров
     public void debugTimers() {
         plugin.getLogger().info("=== DEBUG: ACTIVE TIMERS ===");
         plugin.getLogger().info("Total protected items: " + protectedItems.size());
@@ -295,7 +283,6 @@ public class LootManager {
         this.config = plugin.getConfig();
     }
 
-    // Внутренний класс ProtectedItem
     private static class ProtectedItem {
         private final Item item;
         private final UUID killerId;
@@ -315,4 +302,5 @@ public class LootManager {
         public ArmorStand getHologram() { return hologram; }
         public void setHologram(ArmorStand hologram) { this.hologram = hologram; }
     }
+
 }
