@@ -1,0 +1,13 @@
+name: StarsAntiPodSos
+version: 1.0.0
+main: Al3x.antiPodSoss.AntiPodSos
+api-version: 1.13
+author: Al3xPay
+description: Защита лута после смерти от игроков
+permissions:
+  antipodsos.bypass:
+    description: Обход защиты лута
+    default: op
+  antipodsos.reload:
+    description: Перезагрузка конфига
+    default: op
